@@ -86,7 +86,7 @@ done
 
 echo "Fetching archived backup..."
 # fetch backup
-wal-g backup-fetch "$PGDATA" "$BACKUP_NAME" >/dev/null
+wal-g backup-fetch "$PGDATA" "$BACKUP_NAME"
 
 # create missing folders
 mkdir -p "$PGDATA"/{pg_tblspc,pg_twophase,pg_stat,pg_commit_ts}/

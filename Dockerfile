@@ -30,14 +30,14 @@ RUN set -x                                                                      
   && curl -fsSL -o wal-g https://github.com/kubedb/wal-g/releases/download/0.2.13-ac/wal-g-alpine-amd64 \
   && chmod 755 wal-g
 
-FROM postgres:9.6-alpine
+FROM postgres:10.2-alpine
 
 RUN set -x \
   && apk add --update --no-cache ca-certificates
 
 ENV PV /var/pv
 ENV PGDATA $PV/data
-ENV PGWAL $PGDATA/pg_xlog
+ENV PGWAL $PGDATA/pg_wal
 ENV INITDB /var/initdb
 ENV WALG_D /etc/wal-g.d/env
 
@@ -51,7 +51,7 @@ VOLUME ["$PV"]
 ENV STANDBY warm
 ENV RESTORE false
 ENV BACKUP_NAME LATEST
-ENV PITR latest
+ENV PITR false
 ENV ARCHIVE_S3_PREFIX ""
 ENV ARCHIVE_S3_ENDPOINT ""
 ENV RESTORE_S3_PREFIX ""
