@@ -22,12 +22,12 @@ RUN set -x \
   && apt-get install -y --no-install-recommends apt-transport-https ca-certificates curl unzip
 
 RUN set -x                                                                                                                                              \
-  && curl -fSL -o pg-leader-election-binaries.zip https://github.com/kubedb/pg-leader-election/releases/download/v0.1.0/pg-leader-election-binaries.zip \
+  && curl -fsSL -o pg-leader-election-binaries.zip https://github.com/kubedb/pg-leader-election/releases/download/v0.1.0/pg-leader-election-binaries.zip \
   && unzip pg-leader-election-binaries.zip                                                                                                              \
   && chmod 755 pg-leader-election-binaries/linux_amd64/pg-leader-election
 
 RUN set -x                                                                                             \
-  && curl -fSL -o wal-g https://github.com/kubedb/wal-g/releases/download/0.2.13-ac/wal-g-alpine-amd64 \
+  && curl -fsSL -o wal-g https://github.com/kubedb/wal-g/releases/download/0.2.13-ac/wal-g-alpine-amd64 \
   && chmod 755 wal-g
 
 FROM postgres:9.6.7-alpine
