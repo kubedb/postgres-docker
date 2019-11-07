@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 mkdir -p "$PGDATA"
 rm -rf "$PGDATA"/*
 chmod 0700 "$PGDATA"
@@ -24,10 +23,10 @@ CRED_PATH="/srv/wal-g/restore/secrets"
 
 if [[ ${RESTORE_S3_PREFIX} != "" ]]; then
   export WALE_S3_PREFIX="$RESTORE_S3_PREFIX"
-  [[ -e "$CRED_PATH/AWS_ACCESS_KEY_ID" ]] &&  export AWS_ACCESS_KEY_ID=$(cat "$CRED_PATH/AWS_ACCESS_KEY_ID")
-  [[ -e "$CRED_PATH/AWS_SECRET_ACCESS_KEY" ]] &&  export AWS_SECRET_ACCESS_KEY=$(cat "$CRED_PATH/AWS_SECRET_ACCESS_KEY")
+  [[ -e "$CRED_PATH/AWS_ACCESS_KEY_ID" ]] && export AWS_ACCESS_KEY_ID=$(cat "$CRED_PATH/AWS_ACCESS_KEY_ID")
+  [[ -e "$CRED_PATH/AWS_SECRET_ACCESS_KEY" ]] && export AWS_SECRET_ACCESS_KEY=$(cat "$CRED_PATH/AWS_SECRET_ACCESS_KEY")
   if [[ ${RESTORE_S3_ENDPOINT} != "" ]]; then
-    [[ -e "$CRED_PATH/CA_CERT_DATA" ]] &&  export WALG_S3_CA_CERT_FILE="$CRED_PATH/CA_CERT_DATA"
+    [[ -e "$CRED_PATH/CA_CERT_DATA" ]] && export WALG_S3_CA_CERT_FILE="$CRED_PATH/CA_CERT_DATA"
     export AWS_ENDPOINT=$RESTORE_S3_ENDPOINT
     export AWS_S3_FORCE_PATH_STYLE="true"
     export AWS_REGION="us-east-1"
@@ -37,7 +36,7 @@ if [[ ${RESTORE_S3_PREFIX} != "" ]]; then
 elif [[ ${RESTORE_GS_PREFIX} != "" ]]; then
   export WALE_GS_PREFIX="$RESTORE_GS_PREFIX"
   [[ -e "$CRED_PATH/GOOGLE_APPLICATION_CREDENTIALS" ]] && export GOOGLE_APPLICATION_CREDENTIALS="$CRED_PATH/GOOGLE_APPLICATION_CREDENTIALS"
-  [[ -e "$CRED_PATH/GOOGLE_SERVICE_ACCOUNT_JSON_KEY" ]] &&  export GOOGLE_APPLICATION_CREDENTIALS="$CRED_PATH/GOOGLE_SERVICE_ACCOUNT_JSON_KEY"
+  [[ -e "$CRED_PATH/GOOGLE_SERVICE_ACCOUNT_JSON_KEY" ]] && export GOOGLE_APPLICATION_CREDENTIALS="$CRED_PATH/GOOGLE_SERVICE_ACCOUNT_JSON_KEY"
 
 elif [[ ${RESTORE_FILE_PREFIX} != "" ]]; then
   export WALG_FILE_PREFIX="$RESTORE_FILE_PREFIX"
@@ -52,13 +51,13 @@ elif [[ ${RESTORE_AZ_PREFIX} != "" ]]; then
 
 elif [[ ${RESTORE_SWIFT_PREFIX} != "" ]]; then
   export WALE_SWIFT_PREFIX="$RESTORE_SWIFT_PREFIX"
-  [[ -e "$CRED_PATH/OS_USERNAME" ]] &&  export OS_USERNAME=$(cat "$CRED_PATH/OS_USERNAME")
-  [[ -e "$CRED_PATH/OS_PASSWORD" ]] &&  export OS_PASSWORD=$(cat "$CRED_PATH/OS_PASSWORD")
-  [[ -e "$CRED_PATH/OS_REGION_NAME" ]] &&  export OS_REGION_NAME=$(cat "$CRED_PATH/OS_REGION_NAME")
-  [[ -e "$CRED_PATH/OS_AUTH_URL" ]] &&  export OS_AUTH_URL=$(cat "$CRED_PATH/OS_AUTH_URL")
+  [[ -e "$CRED_PATH/OS_USERNAME" ]] && export OS_USERNAME=$(cat "$CRED_PATH/OS_USERNAME")
+  [[ -e "$CRED_PATH/OS_PASSWORD" ]] && export OS_PASSWORD=$(cat "$CRED_PATH/OS_PASSWORD")
+  [[ -e "$CRED_PATH/OS_REGION_NAME" ]] && export OS_REGION_NAME=$(cat "$CRED_PATH/OS_REGION_NAME")
+  [[ -e "$CRED_PATH/OS_AUTH_URL" ]] && export OS_AUTH_URL=$(cat "$CRED_PATH/OS_AUTH_URL")
   #v2
-  [[ -e "$CRED_PATH/OS_TENANT_NAME" ]] &&  export OS_TENANT_NAME=$(cat "$CRED_PATH/OS_TENANT_NAME")
-  [[ -e "$CRED_PATH/OS_TENANT_ID" ]] &&  export OS_TENANT_ID=$(cat "$CRED_PATH/OS_TENANT_ID")
+  [[ -e "$CRED_PATH/OS_TENANT_NAME" ]] && export OS_TENANT_NAME=$(cat "$CRED_PATH/OS_TENANT_NAME")
+  [[ -e "$CRED_PATH/OS_TENANT_ID" ]] && export OS_TENANT_ID=$(cat "$CRED_PATH/OS_TENANT_ID")
   #v3
   [[ -e "$CRED_PATH/OS_USER_DOMAIN_NAME" ]] && export OS_USER_DOMAIN_NAME=$(cat "$CRED_PATH/OS_USER_DOMAIN_NAME")
 
@@ -132,7 +131,7 @@ if [ "$ARCHIVE" == "wal-g" ]; then
   echo "archive_timeout = 60" >>/tmp/postgresql.conf
   echo "archive_mode = always" >>/tmp/postgresql.conf
 fi
-cat /scripts/primary/postgresql.conf >> /tmp/postgresql.conf
+cat /scripts/primary/postgresql.conf >>/tmp/postgresql.conf
 mv /tmp/postgresql.conf "$PGDATA/postgresql.conf"
 
 rm "$PGDATA/recovery.done" &>/dev/null

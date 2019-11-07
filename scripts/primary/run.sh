@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 set -e
 
 echo "Running as Primary"
@@ -76,13 +75,13 @@ if [ "$ARCHIVE" == "wal-g" ]; then
 
   elif [[ ${ARCHIVE_SWIFT_PREFIX} != "" ]]; then
     export WALE_SWIFT_PREFIX="$ARCHIVE_SWIFT_PREFIX"
-    [[ -e "$CRED_PATH/OS_USERNAME" ]] &&  export OS_USERNAME=$(cat "$CRED_PATH/OS_USERNAME")
-    [[ -e "$CRED_PATH/OS_PASSWORD" ]] &&  export OS_PASSWORD=$(cat "$CRED_PATH/OS_PASSWORD")
-    [[ -e "$CRED_PATH/OS_REGION_NAME" ]] &&  export OS_REGION_NAME=$(cat "$CRED_PATH/OS_REGION_NAME")
-    [[ -e "$CRED_PATH/OS_AUTH_URL" ]] &&  export OS_AUTH_URL=$(cat "$CRED_PATH/OS_AUTH_URL")
+    [[ -e "$CRED_PATH/OS_USERNAME" ]] && export OS_USERNAME=$(cat "$CRED_PATH/OS_USERNAME")
+    [[ -e "$CRED_PATH/OS_PASSWORD" ]] && export OS_PASSWORD=$(cat "$CRED_PATH/OS_PASSWORD")
+    [[ -e "$CRED_PATH/OS_REGION_NAME" ]] && export OS_REGION_NAME=$(cat "$CRED_PATH/OS_REGION_NAME")
+    [[ -e "$CRED_PATH/OS_AUTH_URL" ]] && export OS_AUTH_URL=$(cat "$CRED_PATH/OS_AUTH_URL")
     #v2
-    [[ -e "$CRED_PATH/OS_TENANT_NAME" ]] &&  export OS_TENANT_NAME=$(cat "$CRED_PATH/OS_TENANT_NAME")
-    [[ -e "$CRED_PATH/OS_TENANT_ID" ]] &&  export OS_TENANT_ID=$(cat "$CRED_PATH/OS_TENANT_ID")
+    [[ -e "$CRED_PATH/OS_TENANT_NAME" ]] && export OS_TENANT_NAME=$(cat "$CRED_PATH/OS_TENANT_NAME")
+    [[ -e "$CRED_PATH/OS_TENANT_ID" ]] && export OS_TENANT_ID=$(cat "$CRED_PATH/OS_TENANT_ID")
     #v3
     [[ -e "$CRED_PATH/OS_USER_DOMAIN_NAME" ]] && export OS_USER_DOMAIN_NAME=$(cat "$CRED_PATH/OS_USER_DOMAIN_NAME")
     [[ -e "$CRED_PATH/OS_PROJECT_NAME" ]] && export OS_PROJECT_NAME=$(cat "$CRED_PATH/OS_PROJECT_NAME")

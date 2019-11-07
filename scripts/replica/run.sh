@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 set -eou pipefail
 
 echo "Running as Replica"
@@ -71,9 +70,9 @@ if [ "$STANDBY" == "hot" ]; then
   echo "hot_standby = on" >>/tmp/postgresql.conf
 fi
 if [ "$STREAMING" == "synchronous" ]; then
-   # setup synchronous streaming replication
-   echo "synchronous_commit = remote_write" >>/tmp/postgresql.conf
-   echo "synchronous_standby_names = '*'" >>/tmp/postgresql.conf
+  # setup synchronous streaming replication
+  echo "synchronous_commit = remote_write" >>/tmp/postgresql.conf
+  echo "synchronous_standby_names = '*'" >>/tmp/postgresql.conf
 fi
 
 # push base-backup
@@ -83,10 +82,10 @@ if [ "$ARCHIVE" == "wal-g" ]; then
 
   if [[ ${ARCHIVE_S3_PREFIX} != "" ]]; then
     export WALE_S3_PREFIX="$ARCHIVE_S3_PREFIX"
-    [[ -e "$CRED_PATH/AWS_ACCESS_KEY_ID" ]] &&  export AWS_ACCESS_KEY_ID=$(cat "$CRED_PATH/AWS_ACCESS_KEY_ID")
-    [[ -e "$CRED_PATH/AWS_SECRET_ACCESS_KEY" ]] &&  export AWS_SECRET_ACCESS_KEY=$(cat "$CRED_PATH/AWS_SECRET_ACCESS_KEY")
+    [[ -e "$CRED_PATH/AWS_ACCESS_KEY_ID" ]] && export AWS_ACCESS_KEY_ID=$(cat "$CRED_PATH/AWS_ACCESS_KEY_ID")
+    [[ -e "$CRED_PATH/AWS_SECRET_ACCESS_KEY" ]] && export AWS_SECRET_ACCESS_KEY=$(cat "$CRED_PATH/AWS_SECRET_ACCESS_KEY")
     if [[ ${ARCHIVE_S3_ENDPOINT} != "" ]]; then
-      [[ -e "$CRED_PATH/CA_CERT_DATA" ]] &&  export WALG_S3_CA_CERT_FILE="$CRED_PATH/CA_CERT_DATA"
+      [[ -e "$CRED_PATH/CA_CERT_DATA" ]] && export WALG_S3_CA_CERT_FILE="$CRED_PATH/CA_CERT_DATA"
       export AWS_ENDPOINT=$ARCHIVE_S3_ENDPOINT
       export AWS_S3_FORCE_PATH_STYLE="true"
       export AWS_REGION="us-east-1"
@@ -95,7 +94,7 @@ if [ "$ARCHIVE" == "wal-g" ]; then
   elif [[ ${ARCHIVE_GS_PREFIX} != "" ]]; then
     export WALE_GS_PREFIX="$ARCHIVE_GS_PREFIX"
     [[ -e "$CRED_PATH/GOOGLE_APPLICATION_CREDENTIALS" ]] && export GOOGLE_APPLICATION_CREDENTIALS="$CRED_PATH/GOOGLE_APPLICATION_CREDENTIALS"
-    [[ -e "$CRED_PATH/GOOGLE_SERVICE_ACCOUNT_JSON_KEY" ]] &&  export GOOGLE_APPLICATION_CREDENTIALS="$CRED_PATH/GOOGLE_SERVICE_ACCOUNT_JSON_KEY"
+    [[ -e "$CRED_PATH/GOOGLE_SERVICE_ACCOUNT_JSON_KEY" ]] && export GOOGLE_APPLICATION_CREDENTIALS="$CRED_PATH/GOOGLE_SERVICE_ACCOUNT_JSON_KEY"
 
   elif [[ ${ARCHIVE_FILE_PREFIX} != "" ]]; then
     export WALG_FILE_PREFIX="$ARCHIVE_FILE_PREFIX/$(hostname)"
@@ -110,13 +109,13 @@ if [ "$ARCHIVE" == "wal-g" ]; then
 
   elif [[ ${ARCHIVE_SWIFT_PREFIX} != "" ]]; then
     export WALE_SWIFT_PREFIX="$ARCHIVE_SWIFT_PREFIX"
-    [[ -e "$CRED_PATH/OS_USERNAME" ]] &&  export OS_USERNAME=$(cat "$CRED_PATH/OS_USERNAME")
-    [[ -e "$CRED_PATH/OS_PASSWORD" ]] &&  export OS_PASSWORD=$(cat "$CRED_PATH/OS_PASSWORD")
-    [[ -e "$CRED_PATH/OS_REGION_NAME" ]] &&  export OS_REGION_NAME=$(cat "$CRED_PATH/OS_REGION_NAME")
-    [[ -e "$CRED_PATH/OS_AUTH_URL" ]] &&  export OS_AUTH_URL=$(cat "$CRED_PATH/OS_AUTH_URL")
+    [[ -e "$CRED_PATH/OS_USERNAME" ]] && export OS_USERNAME=$(cat "$CRED_PATH/OS_USERNAME")
+    [[ -e "$CRED_PATH/OS_PASSWORD" ]] && export OS_PASSWORD=$(cat "$CRED_PATH/OS_PASSWORD")
+    [[ -e "$CRED_PATH/OS_REGION_NAME" ]] && export OS_REGION_NAME=$(cat "$CRED_PATH/OS_REGION_NAME")
+    [[ -e "$CRED_PATH/OS_AUTH_URL" ]] && export OS_AUTH_URL=$(cat "$CRED_PATH/OS_AUTH_URL")
     #v2
-    [[ -e "$CRED_PATH/OS_TENANT_NAME" ]] &&  export OS_TENANT_NAME=$(cat "$CRED_PATH/OS_TENANT_NAME")
-    [[ -e "$CRED_PATH/OS_TENANT_ID" ]] &&  export OS_TENANT_ID=$(cat "$CRED_PATH/OS_TENANT_ID")
+    [[ -e "$CRED_PATH/OS_TENANT_NAME" ]] && export OS_TENANT_NAME=$(cat "$CRED_PATH/OS_TENANT_NAME")
+    [[ -e "$CRED_PATH/OS_TENANT_ID" ]] && export OS_TENANT_ID=$(cat "$CRED_PATH/OS_TENANT_ID")
     #v3
     [[ -e "$CRED_PATH/OS_USER_DOMAIN_NAME" ]] && export OS_USER_DOMAIN_NAME=$(cat "$CRED_PATH/OS_USER_DOMAIN_NAME")
     [[ -e "$CRED_PATH/OS_PROJECT_NAME" ]] && export OS_PROJECT_NAME=$(cat "$CRED_PATH/OS_PROJECT_NAME")
@@ -135,7 +134,7 @@ if [ "$ARCHIVE" == "wal-g" ]; then
   echo "archive_timeout = 60" >>/tmp/postgresql.conf
   echo "archive_mode = always" >>/tmp/postgresql.conf
 fi
-cat /scripts/primary/postgresql.conf >> /tmp/postgresql.conf
+cat /scripts/primary/postgresql.conf >>/tmp/postgresql.conf
 mv /tmp/postgresql.conf "$PGDATA/postgresql.conf"
 
 exec postgres

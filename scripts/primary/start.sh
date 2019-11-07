@@ -14,7 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 mkdir -p "$PGDATA"
 rm -rf "$PGDATA"/*
 chmod 0700 "$PGDATA"
@@ -39,14 +38,17 @@ echo "wal_level = replica" >>/tmp/postgresql.conf
 echo "max_wal_senders = 99" >>/tmp/postgresql.conf
 echo "wal_keep_segments = 32" >>/tmp/postgresql.conf
 
-cat /scripts/primary/postgresql.conf >> /tmp/postgresql.conf
+cat /scripts/primary/postgresql.conf >>/tmp/postgresql.conf
 mv /tmp/postgresql.conf "$PGDATA/postgresql.conf"
 
 # setup pg_hba.conf
-{ echo; echo 'local all         all                         trust'; }   >>"$PGDATA/pg_hba.conf"
-{       echo 'host  all         all         127.0.0.1/32    trust'; }   >>"$PGDATA/pg_hba.conf"
-{       echo 'host  all         all         0.0.0.0/0       md5'; }     >>"$PGDATA/pg_hba.conf"
-{       echo 'host  replication postgres    0.0.0.0/0       md5'; }     >>"$PGDATA/pg_hba.conf"
+{
+  echo
+  echo 'local all         all                         trust'
+} >>"$PGDATA/pg_hba.conf"
+{ echo 'host  all         all         127.0.0.1/32    trust'; } >>"$PGDATA/pg_hba.conf"
+{ echo 'host  all         all         0.0.0.0/0       md5'; } >>"$PGDATA/pg_hba.conf"
+{ echo 'host  replication postgres    0.0.0.0/0       md5'; } >>"$PGDATA/pg_hba.conf"
 
 # start postgres
 pg_ctl -D "$PGDATA" -w start
@@ -83,10 +85,21 @@ echo
 # initialize database
 for f in "$INITDB"/*; do
   case "$f" in
-    *.sh)     echo "$0: running $f"; . "$f" ;;
-    *.sql)    echo "$0: running $f"; "${psql[@]}" -f "$f"; echo ;;
-    *.sql.gz) echo "$0: running $f"; gunzip -c "$f" | "${psql[@]}"; echo ;;
-    *)        echo "$0: ignoring $f" ;;
+    *.sh)
+      echo "$0: running $f"
+      . "$f"
+      ;;
+    *.sql)
+      echo "$0: running $f"
+      "${psql[@]}" -f "$f"
+      echo
+      ;;
+    *.sql.gz)
+      echo "$0: running $f"
+      gunzip -c "$f" | "${psql[@]}"
+      echo
+      ;;
+    *) echo "$0: ignoring $f" ;;
   esac
   echo
 done
@@ -96,9 +109,9 @@ pg_ctl -D "$PGDATA" -m fast -w stop
 
 touch /tmp/postgresql.conf
 if [ "$STREAMING" == "synchronous" ]; then
-   # setup synchronous streaming replication
-   echo "synchronous_commit = remote_write" >>/tmp/postgresql.conf
-   echo "synchronous_standby_names = '*'" >>/tmp/postgresql.conf
+  # setup synchronous streaming replication
+  echo "synchronous_commit = remote_write" >>/tmp/postgresql.conf
+  echo "synchronous_standby_names = '*'" >>/tmp/postgresql.conf
 fi
 
 if [ "$ARCHIVE" == "wal-g" ]; then
@@ -109,4 +122,4 @@ if [ "$ARCHIVE" == "wal-g" ]; then
 fi
 
 # ref: https://superuser.com/a/246841/985093
-cat /tmp/postgresql.conf $PGDATA/postgresql.conf > "/tmp/postgresql.conf.tmp" && mv "/tmp/postgresql.conf.tmp"  "$PGDATA/postgresql.conf"
+cat /tmp/postgresql.conf $PGDATA/postgresql.conf >"/tmp/postgresql.conf.tmp" && mv "/tmp/postgresql.conf.tmp" "$PGDATA/postgresql.conf"
