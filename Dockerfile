@@ -30,7 +30,7 @@ RUN set -x                                                                      
   && curl -fsSL -o wal-g https://github.com/kubedb/wal-g/releases/download/0.2.13-ac/wal-g-alpine-amd64 \
   && chmod 755 wal-g
 
-FROM postgres:9.6.7-alpine
+FROM postgres:9.6-alpine
 
 RUN set -x \
   && apk add --update --no-cache ca-certificates
