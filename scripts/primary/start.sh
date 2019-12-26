@@ -35,7 +35,7 @@ initdb $POSTGRES_INITDB_ARGS --pgdata="$PGDATA"
 # setup postgresql.conf
 touch /tmp/postgresql.conf
 echo "wal_level = replica" >>/tmp/postgresql.conf
-echo "max_wal_senders = 99" >>/tmp/postgresql.conf
+echo "max_wal_senders = 90" >>/tmp/postgresql.conf # default is 10.  value must be less than max_connections minus superuser_reserved_connections. ref: https://www.postgresql.org/docs/11/runtime-config-replication.html#GUC-MAX-WAL-SENDERS
 echo "wal_keep_segments = 32" >>/tmp/postgresql.conf
 
 cat /scripts/primary/postgresql.conf >>/tmp/postgresql.conf
@@ -48,7 +48,7 @@ mv /tmp/postgresql.conf "$PGDATA/postgresql.conf"
 } >>"$PGDATA/pg_hba.conf"
 { echo 'host  all         all         127.0.0.1/32    trust'; } >>"$PGDATA/pg_hba.conf"
 { echo 'host  all         all         0.0.0.0/0       md5'; } >>"$PGDATA/pg_hba.conf"
-{ echo 'host  replication postgres    0.0.0.0/0       md5'; } >>"$PGDATA/pg_hba.conf"
+{ echo "host  replication ${POSTGRES_USER:-postgres}    0.0.0.0/0       md5"; } >>"$PGDATA/pg_hba.conf"
 
 # start postgres
 pg_ctl -D "$PGDATA" -w start
