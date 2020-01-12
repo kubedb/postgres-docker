@@ -48,7 +48,7 @@ mv /tmp/postgresql.conf "$PGDATA/postgresql.conf"
 } >>"$PGDATA/pg_hba.conf"
 { echo 'host  all         all         127.0.0.1/32    trust'; } >>"$PGDATA/pg_hba.conf"
 { echo 'host  all         all         0.0.0.0/0       md5'; } >>"$PGDATA/pg_hba.conf"
-{ echo 'host  replication postgres    0.0.0.0/0       md5'; } >>"$PGDATA/pg_hba.conf"
+{ echo "host  replication ${POSTGRES_USER:-postgres}    0.0.0.0/0       md5"; } >>"$PGDATA/pg_hba.conf"
 
 # start postgres
 pg_ctl -D "$PGDATA" -w start
@@ -116,7 +116,7 @@ fi
 
 if [ "$ARCHIVE" == "wal-g" ]; then
   # setup postgresql.conf
-  echo "archive_command = 'wal-g wal-push %p'" >>/tmp/postgresql.conf
+  echo "archive_command = '(export PGUSER=${POSTGRES_USER:-postgres}; wal-g wal-push %p)'" >>/tmp/postgresql.conf
   echo "archive_timeout = 60" >>/tmp/postgresql.conf
   echo "archive_mode = always" >>/tmp/postgresql.conf
 fi

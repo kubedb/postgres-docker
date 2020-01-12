@@ -54,7 +54,7 @@ if [ "$ARCHIVE" == "wal-g" ]; then
       export AWS_ENDPOINT=$ARCHIVE_S3_ENDPOINT
       export AWS_S3_FORCE_PATH_STYLE="true"
       export AWS_REGION="us-east-1"
-      [[ -e "$ARCHIVE_S3_REGION" ]] && export AWS_REGION=$ARCHIVE_S3_REGION
+      [[ -e "$CRED_PATH/ARCHIVE_S3_REGION" ]] && export AWS_REGION=$(cat "$CRED_PATH/ARCHIVE_S3_REGION")
     fi
 
   elif [[ ${ARCHIVE_GS_PREFIX} != "" ]]; then
@@ -96,7 +96,7 @@ if [ "$ARCHIVE" == "wal-g" ]; then
   fi
 
   pg_ctl -D "$PGDATA" -w start
-  PGUSER="postgres" wal-g backup-push "$PGDATA"
+  (export PGUSER=${POSTGRES_USER:-postgres}; wal-g backup-push "$PGDATA")
   pg_ctl -D "$PGDATA" -m fast -w stop
 fi
 

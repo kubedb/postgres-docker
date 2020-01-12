@@ -37,7 +37,7 @@ done
 
 while true; do
   echo "Attempting query on primary"
-  psql -h "$PRIMARY_HOST" --no-password --username=postgres --command="select now();" &>/dev/null && break
+  psql -h "$PRIMARY_HOST" --no-password "--username=${POSTGRES_USER:-postgres}" --command="select now();" &>/dev/null && break
   # check if current pod became leader itself
   if [[ -e "/tmp/pg-failover-trigger" ]]; then
     echo "Postgres promotion trigger_file found. Running primary run script"
@@ -51,14 +51,14 @@ mkdir -p "$PGDATA"
 rm -rf "$PGDATA"/*
 chmod 0700 "$PGDATA"
 
-pg_basebackup -X fetch --no-password --pgdata "$PGDATA" --username=postgres --host="$PRIMARY_HOST"
+pg_basebackup -X fetch --no-password --pgdata "$PGDATA" "--username=${POSTGRES_USER:-postgres}" --host="$PRIMARY_HOST"
 
 # setup recovery.conf
 cp /scripts/replica/recovery.conf /tmp
 echo "recovery_target_timeline = 'latest'" >>/tmp/recovery.conf
 echo "archive_cleanup_command = 'pg_archivecleanup $PGWAL %r'" >>/tmp/recovery.conf
 # primary_conninfo is used for streaming replication
-echo "primary_conninfo = 'application_name=$HOSTNAME host=$PRIMARY_HOST'" >>/tmp/recovery.conf
+echo "primary_conninfo = 'application_name=$HOSTNAME host=$PRIMARY_HOST user=${POSTGRES_USER:-postgres}'" >>/tmp/recovery.conf
 mv /tmp/recovery.conf "$PGDATA/recovery.conf"
 
 # setup postgresql.conf
@@ -89,7 +89,7 @@ if [ "$ARCHIVE" == "wal-g" ]; then
       export AWS_ENDPOINT=$ARCHIVE_S3_ENDPOINT
       export AWS_S3_FORCE_PATH_STYLE="true"
       export AWS_REGION="us-east-1"
-      [[ -e "$ARCHIVE_S3_REGION" ]] && export AWS_REGION=$ARCHIVE_S3_REGION
+      [[ -e "$CRED_PATH/ARCHIVE_S3_REGION" ]] && export AWS_REGION=$(cat "$CRED_PATH/ARCHIVE_S3_REGION")
     fi
   elif [[ ${ARCHIVE_GS_PREFIX} != "" ]]; then
     export WALE_GS_PREFIX="$ARCHIVE_GS_PREFIX"
@@ -130,7 +130,7 @@ if [ "$ARCHIVE" == "wal-g" ]; then
   fi
 
   # setup postgresql.conf
-  echo "archive_command = 'wal-g wal-push %p'" >>/tmp/postgresql.conf
+  echo "archive_command = '(export PGUSER=${POSTGRES_USER:-postgres}; wal-g wal-push %p)'" >>/tmp/postgresql.conf
   echo "archive_timeout = 60" >>/tmp/postgresql.conf
   echo "archive_mode = always" >>/tmp/postgresql.conf
 fi

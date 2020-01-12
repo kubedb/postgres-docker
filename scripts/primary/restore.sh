@@ -111,7 +111,7 @@ if [ "$PITR" = true ]; then
   fi
 fi
 
-echo "restore_command = 'wal-g wal-fetch %f %p'" >>/tmp/recovery.conf
+echo "restore_command = 'PGUSER=${POSTGRES_USER:-postgres} wal-g wal-fetch %f %p'" >>/tmp/recovery.conf
 mv /tmp/recovery.conf "$PGDATA/recovery.conf"
 
 # setup postgresql.conf
@@ -127,7 +127,7 @@ fi
 
 if [ "$ARCHIVE" == "wal-g" ]; then
   # setup postgresql.conf
-  echo "archive_command = 'wal-g wal-push %p'" >>/tmp/postgresql.conf
+  echo "archive_command = '(export PGUSER=${POSTGRES_USER:-postgres}; wal-g wal-push %p)'" >>/tmp/postgresql.conf
   echo "archive_timeout = 60" >>/tmp/postgresql.conf
   echo "archive_mode = always" >>/tmp/postgresql.conf
 fi
