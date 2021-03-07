@@ -3,8 +3,8 @@ SHELL=/bin/bash -o pipefail
 REGISTRY ?= kubedb
 BIN      := postgres
 IMAGE    := $(REGISTRY)/$(BIN)
-TAG      := $(shell git describe --exact-match --abbrev=0 2>/dev/null || echo "")
-
+#TAG      := $(shell git describe --exact-match --abbrev=0 2>/dev/null || echo "")
+TAG := 9.6.20
 .PHONY: push
 push: container
 	docker push $(IMAGE):$(TAG)
