@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 set -eou pipefail
 
 mkdir -p "$PGDATA"
