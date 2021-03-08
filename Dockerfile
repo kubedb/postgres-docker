@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:9.6.20-alpine
+FROM postgres:9.6.21-alpine
 
 RUN set -x \
   && apk add --update --no-cache ca-certificates
@@ -30,11 +30,7 @@ RUN chown postgres /var/pv
 ENV STANDBY warm
 
 COPY tini /tini
-RUN chmod +x /tini
 
 USER postgres
 ENTRYPOINT ["./tini", "--"]
 CMD ["/scripts/run.sh"]
-
-
-
