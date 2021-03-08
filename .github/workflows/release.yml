@@ -13,6 +13,12 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
+      - name: Install shfmt
+        run: |
+          curl -fsSL -o shfmt https://github.com/mvdan/sh/releases/download/v3.2.4/shfmt_v3.2.4_linux_amd64
+          chmod +x shfmt
+          sudo mv shfmt /usr/local/bin/shfmt
+
       - name: Print version info
         id: semver
         run: |
