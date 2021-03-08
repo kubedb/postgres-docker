@@ -3,36 +3,45 @@ name: Release
 on:
   push:
     tags:
-      - '*.*'
-      - '*.*.*'
+      - "*.*"
+      - "*.*.*"
 
 jobs:
-
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v1
 
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v1
+      - name: Install shfmt
+        run: |
+          curl -fsSL -o shfmt https://github.com/mvdan/sh/releases/download/v3.2.4/shfmt_v3.2.4_linux_amd64
+          chmod +x shfmt
+          sudo mv shfmt /usr/local/bin/shfmt
 
-    - name: Print version info
-      id: semver
-      run: |
-        make version
-    - name: Set up Docker Buildx
-      id: buildx
-      uses: crazy-max/ghaction-docker-buildx@v1
-      with:
-        version: latest
+      - name: Print version info
+        id: semver
+        run: |
+          make version
 
-    - name: Available platforms
-      run: echo ${{ steps.buildx.outputs.platforms }}
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+        with:
+          buildx-version: latest
+          qemu-version: latest
 
-    - name: Build
-      env:
-        DOCKER_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
-        USERNAME: 1gtm
-      run: |
-        docker login --username ${USERNAME} --password ${DOCKER_TOKEN}
-        make push
+      - name: Available platforms
+        run: echo ${{ steps.buildx.outputs.platforms }}
+
+      - name: Run checks
+        run: |
+          make ci
+
+      - name: Build
+        env:
+          DOCKER_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          USERNAME: 1gtm
+        run: |
+          docker login --username ${USERNAME} --password ${DOCKER_TOKEN}
+          make push
