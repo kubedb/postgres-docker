@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:10.15-alpine
+FROM postgres:10.16-alpine
 
 RUN set -x \
   && apk add --update --no-cache ca-certificates
@@ -22,7 +22,6 @@ ENV PGDATA $PV/data
 ENV PGWAL $PGDATA/pg_wal
 ENV INITDB /var/initdb
 
-
 COPY ./scripts /scripts
 
 VOLUME ["$PV"]
@@ -31,12 +30,7 @@ RUN chown postgres /var/pv
 ENV STANDBY warm
 
 COPY tini /tini
-RUN chmod +x /tini
-
 
 USER postgres
 ENTRYPOINT ["./tini", "--"]
 CMD ["/scripts/run.sh"]
-
-
-
