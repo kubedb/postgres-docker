@@ -29,10 +29,7 @@ RUN chown postgres /var/pv
 
 ENV STANDBY warm
 
-
 COPY tini /tini
-RUN chmod +x /tini
-
 
 USER postgres
 ENTRYPOINT ["./tini", "--"]
