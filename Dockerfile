@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:13.2-alpine AS builder
+FROM postgres:13.2 AS builder
 
 RUN  apk add --update alpine-sdk git postgresql-dev
+RUN  apt-get update \
+  && apt-get install -y git build-essential postgresql-server-dev-13
 
 RUN git clone https://github.com/cybertec-postgresql/pg_squeeze.git \
   && cd /pg_squeeze \
@@ -22,6 +24,6 @@ RUN git clone https://github.com/cybertec-postgresql/pg_squeeze.git \
   && make \
   && make install
 
-FROM postgres:13.2-alpine
-COPY --from=builder /usr/local/share/postgresql /usr/local/share/postgresql
-COPY --from=builder /usr/local/lib/postgresql /usr/local/lib/postgresql
+FROM postgres:13.2
+COPY --from=builder /usr/share/postgresql /usr/share/postgresql
+COPY --from=builder /usr/lib/postgresql /usr/lib/postgresql

@@ -1,12 +1,12 @@
 apiVersion: catalog.kubedb.com/v1alpha1
 kind: PostgresVersion
 metadata:
-  name: 13.2-alpine-pgsqueeze
+  name: 13.2-pgsqueeze
 spec:
   coordinator:
     image: kubedb/pg-coordinator:v0.1.1
   db:
-    image: kubedb/postgres:13.2-alpine-pgsqueeze
+    image: kubedb/postgres:13.2-pgsqueeze
   distribution: PostgreSQL
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.9.0
