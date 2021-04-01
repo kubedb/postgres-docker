@@ -1,12 +1,12 @@
 apiVersion: catalog.kubedb.com/v1alpha1
 kind: PostgresVersion
 metadata:
-  name: 13.2-pgsqueeze
+  name: 11.11-pgsqueeze
 spec:
   coordinator:
     image: kubedb/pg-coordinator:v0.1.1
   db:
-    image: kubedb/postgres:13.2-pgsqueeze
+    image: kubedb/postgres:11.11-pgsqueeze
   distribution: PostgreSQL
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.9.0
@@ -17,7 +17,7 @@ spec:
   stash:
     addon:
       backupTask:
-        name: postgres-backup-13.1
+        name: postgres-backup-11.9
       restoreTask:
-        name: postgres-restore-13.1
-  version: "13.2"
+        name: postgres-restore-11.9
+  version: "11.11"
