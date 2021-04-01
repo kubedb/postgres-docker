@@ -4,7 +4,7 @@ metadata:
   name: demo-pgsqueeze
   namespace: default
 spec:
-  version: "13.2-alpine-pgsqueeze"
+  version: "13.2-pgsqueeze"
   replicas: 3
   standbyMode: Hot
   storageType: Durable
