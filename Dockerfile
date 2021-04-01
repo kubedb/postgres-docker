@@ -25,5 +25,3 @@ RUN git clone https://github.com/cybertec-postgresql/pg_squeeze.git \
 FROM postgres:13.2-alpine
 COPY --from=builder /usr/local/share/postgresql /usr/local/share/postgresql
 COPY --from=builder /usr/local/lib/postgresql /usr/local/lib/postgresql
-
-

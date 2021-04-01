@@ -1,10 +1,10 @@
 apiVersion: kubedb.com/v1alpha2
 kind: Postgres
 metadata:
-  name: example-pg
-  namespace: example
+  name: demo-pgsqueeze
+  namespace: default
 spec:
-  version: "13.2-pg-squeeze"
+  version: "13.2-alpine-pgsqueeze"
   replicas: 3
   standbyMode: Hot
   storageType: Durable
@@ -16,3 +16,4 @@ spec:
       requests:
         storage: 1Gi
   terminationPolicy: WipeOut
+
