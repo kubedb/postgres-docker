@@ -4,17 +4,14 @@ metadata:
   name: 13.2-pg-squeeze
 spec:
   coordinator:
-    image: hremon331046/pg-coordinator:custom-uid_linux_amd64
+    image: kubedb/pg-coordinator:v0.1.1
   db:
     image: hremon331046/postgres:13.2-pg_squeeze
   distribution: PostgreSQL
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.9.0
-  features:
-    defaultUser: 70
-    modifyUser: false
   initContainer:
-    image: hremon331046/postgres-init:0.1.0
+    image: kubedb/postgres-init:0.1.0
   podSecurityPolicies:
     databasePolicyName: postgres-db
   stash:

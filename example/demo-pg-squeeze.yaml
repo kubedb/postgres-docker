@@ -1,8 +1,8 @@
 apiVersion: kubedb.com/v1alpha2
 kind: Postgres
 metadata:
-  name: demo-pg
-  namespace: demo
+  name: example-pg
+  namespace: example
 spec:
   version: "13.2-pg-squeeze"
   replicas: 3
