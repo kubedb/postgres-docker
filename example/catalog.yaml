@@ -1,23 +1,26 @@
 apiVersion: catalog.kubedb.com/v1alpha1
 kind: PostgresVersion
 metadata:
-  name: 13.2-pgsqueeze
+  name: 10.16-postgis
 spec:
   coordinator:
-    image: kubedb/pg-coordinator:v0.1.1
+    image: kubedb/pg-coordinator:v0.2.0
   db:
-    image: kubedb/postgres:13.2-pgsqueeze
+    image: kubedb/postgres:10.16-postgis
   distribution: PostgreSQL
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.9.0
   initContainer:
-    image: kubedb/postgres-init:0.1.0
+    image: kubedb/postgres-init:0.2.0
   podSecurityPolicies:
     databasePolicyName: postgres-db
+  securityContext:
+    runAsAnyNonRoot: true
+    runAsUser: 999
   stash:
     addon:
       backupTask:
-        name: postgres-backup-13.1
+        name: postgres-backup-10.14
       restoreTask:
-        name: postgres-restore-13.1
-  version: "13.2"
+        name: postgres-restore-10.14
+  version: "10.16"
