@@ -1,10 +1,10 @@
 apiVersion: kubedb.com/v1alpha2
 kind: Postgres
 metadata:
-  name: demo-pgsqueeze
+  name: demo-postgis
   namespace: default
 spec:
-  version: "13.2-pgsqueeze"
+  version: "13.2-postgis"
   replicas: 3
   standbyMode: Hot
   storageType: Durable

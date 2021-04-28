@@ -14,15 +14,18 @@
 
 FROM postgres:13.2 AS builder
 
-RUN  apt-get update \
-  && apt-get install -y git build-essential postgresql-server-dev-13
+RUN apt-get update \
+  && apt-get install -y git build-essential wget git postgresql-server-dev-13
+RUN wget -q  http://www.xunsearch.com/scws/down/scws-1.2.3.tar.bz2
+RUN tar -xf scws-1.2.3.tar.bz2
+RUN cd scws-1.2.3 && ./configure && make install
+RUN  git clone https://github.com/amutu/zhparser.git
+RUN cd zhparser &&  make && make install
 
-RUN git clone https://github.com/cybertec-postgresql/pg_squeeze.git \
-  && cd /pg_squeeze \
-  && git checkout REL1_3_1 \
-  && make \
-  && make install
 
 FROM postgres:13.2
+RUN  apt-get update \
+  && apt-get install -y postgis postgresql-13-postgis-3
 COPY --from=builder /usr/share/postgresql /usr/share/postgresql
 COPY --from=builder /usr/lib/postgresql /usr/lib/postgresql
+COPY --from=builder /usr/local/lib/libscws.so* /usr/local/lib/
