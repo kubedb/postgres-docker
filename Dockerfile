@@ -12,17 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:13.2 AS builder
+FROM postgres:13.2
 
 RUN  apt-get update \
-  && apt-get install -y git build-essential postgresql-server-dev-13
-
-RUN git clone https://github.com/cybertec-postgresql/pg_squeeze.git \
-  && cd /pg_squeeze \
-  && git checkout REL1_3_1 \
-  && make \
-  && make install
-
-FROM postgres:13.2
-COPY --from=builder /usr/share/postgresql /usr/share/postgresql
-COPY --from=builder /usr/lib/postgresql /usr/lib/postgresql
+  && apt-get install -y postgis postgresql-13-postgis-3
