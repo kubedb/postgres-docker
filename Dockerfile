@@ -12,7 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:10.16
+FROM postgres:10.16 as builder
+RUN apt-get update \
+  && apt-get install -y git build-essential wget git postgresql-server-dev-10
+RUN wget -q  http://www.xunsearch.com/scws/down/scws-1.2.3.tar.bz2
+RUN tar -xf scws-1.2.3.tar.bz2
+RUN cd scws-1.2.3 && ./configure && make install
+RUN  git clone https://github.com/amutu/zhparser.git
+RUN cd zhparser &&  make && make install
 
+
+FROM postgres:10.16
 RUN  apt-get update \
   && apt-get install -y postgis postgresql-10-postgis-3
+COPY --from=builder /usr/share/postgresql /usr/share/postgresql
+COPY --from=builder /usr/lib/postgresql /usr/lib/postgresql
+COPY --from=builder /usr/local/lib/libscws.so* /usr/local/lib/
+
+
