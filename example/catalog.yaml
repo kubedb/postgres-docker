@@ -14,6 +14,9 @@ spec:
     image: kubedb/postgres-init:0.1.0
   podSecurityPolicies:
     databasePolicyName: postgres-db
+  securityContext:
+    runAsAnyNonRoot: true
+    runAsUser: 999
   stash:
     addon:
       backupTask:
