@@ -2,7 +2,7 @@
 
 1. Install KubeDB operator.
 
-2. Add 1postgis version to KubeDB catalog.
+2. Add the postgis version to KubeDB catalog.
 
 ```
 kubectl apply -f https://github.com/kubedb/postgres-docker/raw/release-13.2-postgis/example/catalog.yaml
