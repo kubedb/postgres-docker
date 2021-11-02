@@ -4,14 +4,14 @@ metadata:
   name: 13.2-alpine-pgsqueeze
 spec:
   coordinator:
-    image: kubedb/pg-coordinator:v0.1.1
+    image: kubedb/pg-coordinator:v0.6.0
   db:
     image: kubedb/postgres:13.2-alpine-pgsqueeze
   distribution: PostgreSQL
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.9.0
   initContainer:
-    image: kubedb/postgres-init:0.1.0
+    image: kubedb/postgres-init:0.3.0
   podSecurityPolicies:
     databasePolicyName: postgres-db
   securityContext:
