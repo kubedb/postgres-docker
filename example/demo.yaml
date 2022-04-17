@@ -1,0 +1,21 @@
+apiVersion: kubedb.com/v1alpha2
+kind: Postgres
+metadata:
+  name: demo-pgaudit
+  namespace: demo
+spec:
+  version: "13.2-pg-audit"
+  replicas: 3
+  configSecret:
+    name: pg-configuration
+  standbyMode: Hot
+  storageType: Durable
+  storage:
+    storageClassName: "standard"
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 1Gi
+  terminationPolicy: WipeOut
+

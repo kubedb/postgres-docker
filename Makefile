@@ -11,10 +11,7 @@ push: container
 
 .PHONY: container
 container:
-	wget -qO tini https://github.com/kubedb/tini/releases/download/v0.20.0/tini-static
-	chmod +x tini
 	docker build --pull -t $(IMAGE):$(TAG) .
-	rm tini
 
 .PHONY: version
 version:

@@ -12,28 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:13.2-alpine
+FROM postgres:13.2 AS builder
 
-RUN set -x \
-  && apk add --update --no-cache ca-certificates
+RUN  apt-get update \
+  && apt-get install -y git build-essential apt-utils postgresql-server-dev-13 libkrb5-dev
+RUN git clone https://github.com/pgaudit/pgaudit.git \
+  && ls -la \
+  && cd /pgaudit \
+  && git checkout REL_13_STABLE \
+  && make install USE_PGXS=1 PG_CONFIG=/usr/bin/pg_config
 
-ENV PV /var/pv
-ENV PGDATA $PV/data
-ENV PGWAL $PGDATA/pg_wal
-ENV INITDB /var/initdb
-
-COPY ./scripts /scripts
-
-VOLUME ["$PV"]
-RUN chown postgres /var/pv
-
-ENV STANDBY warm
-
-COPY tini /tini
-
-USER postgres
-ENTRYPOINT ["./tini", "--"]
-CMD ["/scripts/run.sh"]
-
-
-
+FROM postgres:13.2
+COPY --from=builder /usr/share/postgresql /usr/share/postgresql
+COPY --from=builder /usr/lib/postgresql /usr/lib/postgresql
