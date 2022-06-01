@@ -12,16 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:11.11-alpine AS builder
+FROM postgres:11.16-alpine
+# FROM kubedb/postgres:11.2
+
+ENV PG_CRON_VERSION=1.2.0
+ENV PGCTLTIMEOUT=3600
 
 RUN  apk add --update alpine-sdk git postgresql-dev
 
-RUN git clone https://github.com/cybertec-postgresql/pg_squeeze.git \
-  && cd /pg_squeeze \
-  && git checkout REL1_3_1 \
-  && make \
-  && make install
+RUN set -ex \
+    && apk add --no-cache --virtual .fetch-deps ca-certificates  openssl  tar \
+    && apk add --no-cache --virtual .build-deps coreutils dpkg-dev dpkg gcc libc-dev make cmake util-linux-dev \
+    && wget -O /pg_cron.tgz https://github.com/citusdata/pg_cron/archive/v$PG_CRON_VERSION.tar.gz \
+    && tar xvzf /pg_cron.tgz \
+    && cd pg_cron-$PG_CRON_VERSION \
+    && sed -i.bak -e 's/-Werror//g' Makefile \
+    && sed -i.bak -e 's/-Wno-implicit-fallthrough//g' Makefile \
+    && make \
+    && make install \
+    && cd .. \
+    && rm -rf pg_cron.tgz \
+    && rm -rf pg_cron-* \
+    && apk del .fetch-deps .build-deps
 
-FROM postgres:11.11-alpine
-COPY --from=builder /usr/local/share/postgresql /usr/local/share/postgresql
-COPY --from=builder /usr/local/lib/postgresql /usr/local/lib/postgresql
+# https://github.com/citusdata/pg_cron#setting-up-pg_cron
+
+# RUN sed -r -i "s/[#]*\s*(shared_preload_libraries)\s*=\s*'(.*)'/\1 = 'pg_cron,\2'/;s/,'/'/" /scripts/primary/postgresql.conf \
+#    && echo "cron.database_name = 'postgres'" >> /scripts/primary/postgresql.conf

@@ -6,10 +6,10 @@ metadata:
 apiVersion: kubedb.com/v1alpha2
 kind: Postgres
 metadata:
-  name: demo-pgsqueeze
+  name: demo-pgcron
   namespace: demo
 spec:
-  version: "11.11-alpine-pgsqueeze"
+  version: "11.16-alpine-cron"
   replicas: 3
   standbyMode: Hot
   storageType: Durable
