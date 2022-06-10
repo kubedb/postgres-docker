@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:11.16-alpine
+FROM postgres:11.2-alpine
 # FROM kubedb/postgres:11.2
 
 ENV PG_CRON_VERSION=1.2.0

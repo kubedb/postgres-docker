@@ -9,7 +9,7 @@ metadata:
   name: demo-pgcron
   namespace: demo
 spec:
-  version: "11.16-alpine-cron"
+  version: "11.2-alpine-cron"
   replicas: 3
   standbyMode: Hot
   storageType: Durable

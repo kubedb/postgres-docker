@@ -5,11 +5,11 @@
 2. Add pg_cron version to KubeDB catalog.
 
 ```
-kubectl apply -f https://github.com/kubedb/postgres-docker/raw/release-11.16-alpine-cron/example/catalog.yaml
+kubectl apply -f https://github.com/kubedb/postgres-docker/raw/release-11.2-alpine-cron/example/catalog.yaml
 ```
 
 3. Deploy a demo PostgreSQL database.
 
 ```
-kubectl apply -f https://github.com/kubedb/postgres-docker/raw/release-11.16-alpine-cron/example/demo.yaml
+kubectl apply -f https://github.com/kubedb/postgres-docker/raw/release-11.2-alpine-cron/example/demo.yaml
 ```

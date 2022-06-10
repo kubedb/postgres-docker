@@ -1,12 +1,12 @@
 apiVersion: catalog.kubedb.com/v1alpha1
 kind: PostgresVersion
 metadata:
-  name: "11.16-alpine-cron"
+  name: "11.2-alpine-cron"
 spec:
   coordinator:
     image: kubedb/pg-coordinator:v0.11.0
   db:
-    image: kubedb/postgres:11.16-alpine-cron
+    image: kubedb/postgres:11.2-alpine-cron
   distribution: Official
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.9.0
@@ -23,4 +23,4 @@ spec:
         name: postgres-backup-11.9
       restoreTask:
         name: postgres-restore-11.9
-  version: "11.16"
+  version: "11.2"
