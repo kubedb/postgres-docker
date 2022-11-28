@@ -12,10 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:11.16-alpine
-# FROM kubedb/postgres:11.2
+FROM postgres:14.6-alpine
 
-ENV PG_CRON_VERSION=1.2.0
+ENV PG_CRON_VERSION=1.4.2
 ENV PGCTLTIMEOUT=3600
 
 RUN  apk add --update alpine-sdk git postgresql-dev
