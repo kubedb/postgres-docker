@@ -6,10 +6,10 @@ metadata:
 apiVersion: kubedb.com/v1alpha2
 kind: Postgres
 metadata:
-  name: demo-pgcron
+  name: demo-tds-fdw
   namespace: demo
 spec:
-  version: "14.6-alpine-cron"
+  version: "15.3-alpine-tds-fdw"
   replicas: 3
   standbyMode: Hot
   storageType: Durable
@@ -21,4 +21,3 @@ spec:
       requests:
         storage: 1Gi
   terminationPolicy: WipeOut
-

@@ -1,18 +1,18 @@
 apiVersion: catalog.kubedb.com/v1alpha1
 kind: PostgresVersion
 metadata:
-  name: "14.6-alpine-cron"
+  name: "15.3-alpine-tds-fdw"
 spec:
   coordinator:
-    image: kubedb/pg-coordinator:v0.13.0
+    image: ghcr.io/kubedb/pg-coordinator:v0.18.0
   db:
     baseOS: alpine
-    image: kubedb/postgres:14.6-alpine-cron
-  distribution: Official
+    image: ghcr.io/kubedb/postgres:15.3-alpine-tds_fdw
+  distribution: KubeDB
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.9.0
   initContainer:
-    image: kubedb/postgres-init:0.5.0
+    image: ghcr.io/kubedb/postgres-init:0.7.0
   podSecurityPolicies:
     databasePolicyName: postgres-db
   securityContext:
@@ -21,7 +21,10 @@ spec:
   stash:
     addon:
       backupTask:
-        name: postgres-backup-14.0
+        name: postgres-backup-15.1
       restoreTask:
-        name: postgres-restore-14.0
-  version: "14.6"
+        name: postgres-restore-15.1
+  updateConstraints:
+    allowlist:
+    - "14.2"
+  version: "15.3"

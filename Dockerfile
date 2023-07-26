@@ -12,29 +12,52 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:14.6-alpine
+FROM postgres:15.3-alpine
 
-ENV PG_CRON_VERSION=1.4.2
-ENV PGCTLTIMEOUT=3600
+ENV TDS_FDW_VERSION 2.0.3
 
-RUN  apk add --update alpine-sdk git postgresql-dev
-
-RUN set -ex \
-    && apk add --no-cache --virtual .fetch-deps ca-certificates  openssl  tar \
-    && apk add --no-cache --virtual .build-deps coreutils dpkg-dev dpkg gcc libc-dev make cmake util-linux-dev \
-    && wget -O /pg_cron.tgz https://github.com/citusdata/pg_cron/archive/v$PG_CRON_VERSION.tar.gz \
-    && tar xvzf /pg_cron.tgz \
-    && cd pg_cron-$PG_CRON_VERSION \
-    && sed -i.bak -e 's/-Werror//g' Makefile \
-    && sed -i.bak -e 's/-Wno-implicit-fallthrough//g' Makefile \
-    && make \
-    && make install \
-    && cd .. \
-    && rm -rf pg_cron.tgz \
-    && rm -rf pg_cron-* \
+RUN set -eux \
+    && apk add --no-cache --virtual .fetch-deps \
+        ca-certificates \
+        openssl \
+        tar \
+    \
+    && wget -O tds_fdw.tar.gz "https://github.com/tds-fdw/tds_fdw/archive/v${TDS_FDW_VERSION}.tar.gz" \
+    && mkdir -p /usr/src/tds_fdw \
+    && tar \
+        --extract \
+        --file tds_fdw.tar.gz \
+        --directory /usr/src/tds_fdw \
+        --strip-components 1 \
+    && rm tds_fdw.tar.gz \
+    \
+    && apk add --no-cache --virtual .build-deps \
+        \
+        freetds-dev \
+        gcc \
+        libc-dev \
+        make \
+        postgresql-dev \
+        \
+        # The upstream variable, '$DOCKER_PG_LLVM_DEPS' contains
+        #  the correct versions of 'llvm-dev' and 'clang' for the current version of PostgreSQL.
+        # This improvement has been discussed in https://github.com/docker-library/postgres/pull/1077
+        $DOCKER_PG_LLVM_DEPS \
+        \
+    \
+# build TDS FDW
+    && cd /usr/src/tds_fdw \
+    && make USE_PGXS=1 \
+    && make USE_PGXS=1 install \
+    \
+# add .postgis-rundeps
+    && apk add --no-cache --virtual .postgis-rundeps \
+        \
+        freetds-dev \
+    \
+# clean
+    && cd / \
+    && rm -rf /usr/src/tds_fdw \
     && apk del .fetch-deps .build-deps
 
-# https://github.com/citusdata/pg_cron#setting-up-pg_cron
-
-# RUN sed -r -i "s/[#]*\s*(shared_preload_libraries)\s*=\s*'(.*)'/\1 = 'pg_cron,\2'/;s/,'/'/" /scripts/primary/postgresql.conf \
-#    && echo "cron.database_name = 'postgres'" >> /scripts/primary/postgresql.conf
+COPY ./initdb-postgis.sh /docker-entrypoint-initdb.d/10_postgis.sh
