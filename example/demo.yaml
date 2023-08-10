@@ -1,20 +1,15 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: demo
----
 apiVersion: kubedb.com/v1alpha2
 kind: Postgres
 metadata:
   name: demo-tds-fdw
-  namespace: demo
+  namespace: default
 spec:
   version: "15.3-alpine-tds-fdw"
   replicas: 3
   standbyMode: Hot
   storageType: Durable
   storage:
-    storageClassName: "standard"
+    storageClassName: "linode-block-storage"
     accessModes:
       - ReadWriteOnce
     resources:
