@@ -4,15 +4,15 @@ metadata:
   name: "15.3-alpine-tds-fdw"
 spec:
   coordinator:
-    image: ghcr.io/kubedb/pg-coordinator:v0.18.0
+    image: ghcr.io/kubedb/pg-coordinator:v0.20.0
   db:
     baseOS: alpine
     image: ghcr.io/kubedb/postgres:15.3-alpine-tds_fdw
-  distribution: KubeDB
+  distribution: Official
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.9.0
   initContainer:
-    image: ghcr.io/kubedb/postgres-init:0.7.0
+    image: ghcr.io/kubedb/postgres-init:0.9.0
   podSecurityPolicies:
     databasePolicyName: postgres-db
   securityContext:
