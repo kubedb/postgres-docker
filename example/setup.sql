@@ -6,7 +6,7 @@
 
 # sqlcmd -S host,port -U sa -C
 
-# sqlcmd -S 172.232.18.72,1433 -U sa -C
+# sqlcmd -S 172.233.203.156,1433 -U sa -C
 # Pa55w0rd!
 
 CREATE DATABASE Sales
@@ -31,7 +31,7 @@ CREATE DATABASE ramdor;
 CREATE EXTENSION tds_fdw;
 SELECT oid, extname, extversion FROM pg_extension;
 
-CREATE SERVER mssql_svr FOREIGN DATA WRAPPER tds_fdw OPTIONS (servername '172.232.18.72', port '1433', database 'sales', tds_version '7.1');
+CREATE SERVER mssql_svr FOREIGN DATA WRAPPER tds_fdw OPTIONS (servername '172.233.203.156', port '1433', database 'sales', tds_version '7.1');
 
 CREATE USER MAPPING FOR postgres SERVER mssql_svr  OPTIONS (username 'sa', password 'Pa55w0rd!');
 
