@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-configuration
+  namespace: demo
+stringData:
+  user.conf: |-
+    # ref: https://github.com/citusdata/pg_cron#setting-up-pg_cron
+    # required to load pg_cron background worker on start-up
+    shared_preload_libraries = 'pg_cron'
+    # optionally, specify the database in which the pg_cron background worker should run (defaults to postgres)
+    cron.database_name = 'postgres'

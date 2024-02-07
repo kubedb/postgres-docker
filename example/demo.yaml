@@ -11,6 +11,8 @@ metadata:
 spec:
   version: "11.16-alpine-cron"
   replicas: 3
+  configSecret:
+    name: postgres-configuration
   standbyMode: Hot
   storageType: Durable
   storage:
