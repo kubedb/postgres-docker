@@ -5,18 +5,18 @@
 2. Create catalog.yaml
 
 ```
-kubectl apply -f https://github.com/kubedb/postgres-docker/raw/release-15.3-alpine-tds_fdw/example/catalog.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubedb/postgres-docker/15.5-bookworm-age/example/catalog.yaml
 ```
 
 3. Deploy a demo PostgreSQL database.
 
 ```
-kubectl apply -f https://github.com/kubedb/postgres-docker/raw/release-15.3-alpine-tds_fdw/example/demo.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubedb/postgres-docker/15.5-bookworm-age/example/demo.yaml
 ```
 4. Wait until postgres is ready.
 ```bash
 NAME                              VERSION         STATUS   AGE
-postgres.kubedb.com/ha-postgres   15.5-bookworm   Ready    22m
+postgres.kubedb.com/ha-postgres   15.5   Ready    22m
 
 ```
 5. Exec into the pod and run psql command.
@@ -24,7 +24,6 @@ postgres.kubedb.com/ha-postgres   15.5-bookworm   Ready    22m
 kubectl exec -it -n demo ha-postgres-0 -- bash
 Defaulted container "postgres" out of: postgres, pg-coordinator, postgres-init-container (init)
 postgres@ha-postgres-0:/$ psql
-psql (15.7 (Debian 15.7-1.pgdg120+1))
 Type "help" for help.
 
 postgres=# 
