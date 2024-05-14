@@ -1,23 +1,35 @@
 apiVersion: catalog.kubedb.com/v1alpha1
 kind: PostgresVersion
 metadata:
-  name: "15.3-alpine-tds-fdw"
+  name: 15.5-bookworm
 spec:
+  archiver:
+    addon:
+      name: postgres-addon
+      tasks:
+        manifestBackup:
+          name: manifest-backup
+        manifestRestore:
+          name: manifest-restore
+        volumeSnapshot:
+          name: volume-snapshot
+    walg:
+      image: ghcr.io/kubedb/postgres-archiver:v0.6.0_15.5-bookworm
   coordinator:
-    image: ghcr.io/kubedb/pg-coordinator:v0.20.0
+    image: ghcr.io/kubedb/pg-coordinator:v0.29.0
   db:
-    baseOS: alpine
-    image: ghcr.io/kubedb/postgres:15.3-alpine-tds_fdw
+    baseOS: debian
+    image: souravbiswassanto/postgres:15.5-bookworm-age
   distribution: Official
   exporter:
-    image: prometheuscommunity/postgres-exporter:v0.9.0
+    image: prometheuscommunity/postgres-exporter:v0.15.0
   initContainer:
-    image: ghcr.io/kubedb/postgres-init:0.9.0
+    image: ghcr.io/kubedb/postgres-init:0.12.0
   podSecurityPolicies:
     databasePolicyName: postgres-db
   securityContext:
-    runAsAnyNonRoot: false
-    runAsUser: 70
+    runAsAnyNonRoot: true
+    runAsUser: 999
   stash:
     addon:
       backupTask:
@@ -26,5 +38,5 @@ spec:
         name: postgres-restore-15.1
   updateConstraints:
     allowlist:
-    - "14.2"
-  version: "15.3"
+      - "14.2"
+  version: "15.5"
