@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:14.6-alpine
+FROM postgres:16.1-alpine
 
-ENV PG_CRON_VERSION=1.4.2
+ENV PG_CRON_VERSION=1.6.4
 ENV PGCTLTIMEOUT=3600
 
 RUN  apk add --update alpine-sdk git postgresql-dev
