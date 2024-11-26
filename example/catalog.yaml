@@ -23,7 +23,7 @@ spec:
     image: ghcr.io/kubedb/pg-coordinator:v0.33.0
   db:
     baseOS: alpine
-    image: ghcr.io/kubedb/postgres:15.3-alpine-tds_fdw
+    image: souravbiswassanto/postgres:16.1-alpine-tds-fdw
   distribution: Official
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.15.0
@@ -37,9 +37,9 @@ spec:
   stash:
     addon:
       backupTask:
-        name: postgres-backup-15.1
+        name: postgres-backup-16.1
       restoreTask:
-        name: postgres-restore-15.1
+        name: postgres-restore-16.1
   ui:
     - name: pgadmin
       version: v2024.4.27
@@ -47,5 +47,5 @@ spec:
       version: v2024.4.27
   updateConstraints:
     allowlist:
-      - '>= 15.5, <= 16.4'
-  version: "15.3"
+      - "16.4"
+  version: "16.1"
