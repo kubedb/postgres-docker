@@ -40,3 +40,9 @@ CREATE FOREIGN TABLE tds (
  data varchar)
  SERVER mssql_svr
  OPTIONS (query 'SELECT * FROM [Sales].[dbo].[TDS]', row_estimate_method 'showplan_all');
+
+SELECT srvname, srvoptions FROM pg_foreign_server WHERE srvname = 'mssql_svr';
+
+\d+ tds
+
+SELECT * FROM tds;
