@@ -4,7 +4,7 @@ metadata:
   name: demo-tds-fdw
   namespace: demo
 spec:
-  version: "15.3-alpine-tds-fdw"
+  version: "16.1-alpine-tds-fdw"
   replicas: 3
   standbyMode: Hot
   storageType: Durable

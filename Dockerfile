@@ -12,9 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:15.3-alpine
+FROM postgres:16.1-alpine
 
-ENV TDS_FDW_VERSION 2.0.3
+ENV TDS_FDW_VERSION 2.0.4
 
 RUN set -eux \
     && apk add --no-cache --virtual .fetch-deps \
