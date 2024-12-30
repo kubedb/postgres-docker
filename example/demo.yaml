@@ -1,15 +1,14 @@
 apiVersion: kubedb.com/v1
 kind: Postgres
 metadata:
-  name: demo-tds-fdw
+  name: demo-pg-partman
   namespace: demo
 spec:
-  version: "15.5-alpine-tds-fdw"
+  version: "16.4-alpine-pg-partman"
   replicas: 3
   standbyMode: Hot
   storageType: Durable
   storage:
-    # storageClassName: "linode-block-storage"
     accessModes:
       - ReadWriteOnce
     resources:

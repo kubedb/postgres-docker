@@ -1,7 +1,7 @@
 apiVersion: catalog.kubedb.com/v1alpha1
 kind: PostgresVersion
 metadata:
-  name: "15.5-alpine-tds-fdw"
+  name: "16.4-alpine-pg-partman"
 spec:
   archiver:
     addon:
@@ -18,17 +18,17 @@ spec:
         volumeSnapshot:
           name: volume-snapshot
     walg:
-      image: ghcr.io/kubedb/postgres-archiver:(v0.10.0)_15.5-alpine
+      image: ghcr.io/kubedb/postgres-archiver:v0.11.0_16.1-alpine
   coordinator:
-    image: ghcr.io/kubedb/pg-coordinator:v0.33.0
+    image: ghcr.io/kubedb/pg-coordinator:v0.34.0
   db:
     baseOS: alpine
-    image: souravbiswassanto/postgres:15.5-alpine-tds-fdw
+    image: souravbiswassanto/postgres:16.4-pg-partman
   distribution: Official
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.15.0
   initContainer:
-    image: ghcr.io/kubedb/postgres-init:0.16.0
+    image: ghcr.io/kubedb/postgres-init:0.17.0
   podSecurityPolicies:
     databasePolicyName: postgres-db
   securityContext:
@@ -37,9 +37,9 @@ spec:
   stash:
     addon:
       backupTask:
-        name: postgres-backup-15.1
+        name: postgres-backup-16.1
       restoreTask:
-        name: postgres-restore-15.1
+        name: postgres-restore-16.1
   ui:
     - name: pgadmin
       version: v2024.4.27
@@ -47,5 +47,5 @@ spec:
       version: v2024.4.27
   updateConstraints:
     allowlist:
-      - '>= 15.5, <= 16.4'
-  version: "15.5"
+      - '>= 16.6'
+  version: "16.4"
