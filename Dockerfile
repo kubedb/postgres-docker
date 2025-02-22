@@ -11,7 +11,8 @@ RUN set -ex \
     && apk add --no-cache --virtual .fetch-deps ca-certificates  openssl  tar \
     && apk add --no-cache --virtual .build-deps coreutils dpkg-dev dpkg gcc libc-dev make cmake util-linux-dev \
     && wget -O /pg_cron.tgz https://github.com/citusdata/pg_cron/archive/v$PG_CRON_VERSION.tar.gz \
-    && tar xvzf /pg_cron.tgz \
+    && tar xvzf /pg_cron.tgz
+RUN set -ex \
     && cd pg_cron-$PG_CRON_VERSION \
     && sed -i.bak -e 's/-Werror//g' Makefile \
     && sed -i.bak -e 's/-Wno-implicit-fallthrough//g' Makefile \
