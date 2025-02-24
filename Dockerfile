@@ -1,46 +1,59 @@
-# Build stage
-FROM postgres:16.4-alpine as builder
+# syntax=docker/dockerfile:1
 
-# Set versions for pg_partman and pg_jobmon
-ENV PG_REPACK_VERSION=1.5.2
-ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH}"
-# Install build dependencies
-RUN apk add --no-cache --virtual .build-deps \
-    ca-certificates \
-    openssl \
-    tar \
-    unzip \
-    curl \
-    make \
-    gcc \
-    libc-dev \
-    postgresql-dev \
+FROM postgres:16.6 AS production
+
+ENV LANG=en_US.UTF-8
+ENV LANGUAGE=en_US
+ENV LC_ALL=en_US.UTF-8
+ENV LC_CTYPE=en_US.UTF-8
+
+RUN --mount=type=cache,sharing=locked,target=/var/cache/apt <<EOF
+set -ex
+
+apt update
+apt upgrade -y
+apt install -y \
+    build-essential \
     cmake \
-    alpine-sdk \
-    util-linux-dev \
-    clang15-dev \
-    llvm15 \
-    gawk \
+    curl \
     git \
-    zlib-dev \
-    postgresql15-dev \
-    alpine-sdk
+    libicu-dev \
+    libkrb5-dev \
+    pkg-config \
+    postgresql-16-cron \
+    postgresql-16-pgvector \
+    postgresql-16-postgis-3 \
+    postgresql-16-rum \
+    postgresql-server-dev-16
+EOF
 
-Run curl -LO https://api.pgxn.org/dist/pg_repack/${PG_REPACK_VERSION}/pg_repack-${PG_REPACK_VERSION}.zip
-RUN unzip pg_repack-${PG_REPACK_VERSION}.zip
-RUN cd pg_repack-${PG_REPACK_VERSION} && make && make install
+RUN --mount=target=/src,rw <<EOF
+set -ex
 
-# Clean up build dependencies
-RUN apk del .build-deps
+cd /src
 
-# Final stage
-FROM postgres:16.4-alpine
+mkdir -p /tmp/install_setup
+cp build/postgres-documentdb/documentdb/scripts/* /tmp/install_setup/
+cp build/postgres-documentdb/10-preload.sh build/postgres-documentdb/20-install.sql /docker-entrypoint-initdb.d/
 
-# Copy the built extensions from the builder stage
-COPY --from=builder /usr/local/lib/postgresql/ /usr/local/lib/postgresql/
-COPY --from=builder /usr/local/share/postgresql/ /usr/local/share/postgresql/
-COPY --from=builder /usr/local/bin/pg_repack /usr/local/bin/
+export CLEANUP_SETUP=1
+export INSTALL_DEPENDENCIES_ROOT=/tmp/install_setup
 
+env MAKE_PROGRAM=cmake /tmp/install_setup/install_setup_libbson.sh
+/tmp/install_setup/install_setup_pcre2.sh
+/tmp/install_setup/install_setup_intel_decimal_math_lib.sh
 
-# Install runtime dependencies
-RUN apk add --no-cache libpq libxml2-dev
+cd build/postgres-documentdb/documentdb
+make -k -j $(nproc)
+make install
+
+rm -fr /tmp/install_setup /var/lib/apt/lists/*
+EOF
+
+WORKDIR /
+
+LABEL org.opencontainers.image.title="PostgreSQL+DocumentDB"
+LABEL org.opencontainers.image.description="PostgreSQL with DocumentDB extension"
+LABEL org.opencontainers.image.source="https://github.com/FerretDB/FerretDB"
+LABEL org.opencontainers.image.url="https://www.ferretdb.com/"
+LABEL org.opencontainers.image.vendor="FerretDB Inc."
