@@ -24,14 +24,32 @@ RUN apk add --no-cache --virtual .build-deps \
     git \
     zlib-dev \
     postgresql15-dev \
-    alpine-sdk
+    alpine-sdk \
+    coreutils \
+    dpkg-dev \
+    dpkg
 
 Run curl -LO https://api.pgxn.org/dist/pg_repack/${PG_REPACK_VERSION}/pg_repack-${PG_REPACK_VERSION}.zip
 RUN unzip pg_repack-${PG_REPACK_VERSION}.zip
 RUN cd pg_repack-${PG_REPACK_VERSION} && make && make install
 
 # Clean up build dependencies
-RUN apk del .build-deps
+
+ENV PG_CRON_VERSION=1.6.4
+ENV PGCTLTIMEOUT=3600
+
+RUN set -ex \
+    && wget -O /pg_cron.tgz https://github.com/citusdata/pg_cron/archive/v$PG_CRON_VERSION.tar.gz \
+    && tar xvzf /pg_cron.tgz \
+    && cd pg_cron-$PG_CRON_VERSION \
+    && sed -i.bak -e 's/-Werror//g' Makefile \
+    && sed -i.bak -e 's/-Wno-implicit-fallthrough//g' Makefile \
+    && make \
+    && make install \
+    && cd .. \
+    && rm -rf pg_cron.tgz \
+    && rm -rf pg_cron-* \
+    && apk del .build-deps
 
 # Final stage
 FROM postgres:16.4-alpine
