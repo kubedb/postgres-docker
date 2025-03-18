@@ -6,6 +6,7 @@ ENV LANG=en_US.UTF-8
 ENV LANGUAGE=en_US
 ENV LC_ALL=en_US.UTF-8
 ENV LC_CTYPE=en_US.UTF-8
+ENV PG_MAJOR_VERSION=16
 
 RUN --mount=type=cache,sharing=locked,target=/var/cache/apt <<EOF
 set -ex
@@ -52,12 +53,14 @@ EOF
 RUN mkdir -p /tmp/postgresql/share && mkdir -p /tmp/postgresql/lib
 RUN cp -Lr /usr/share/postgresql /tmp/postgresql/share
 RUN cp -Lr /usr/lib/postgresql /tmp/postgresql/lib
+# RUN cp -rL /usr/lib/x86_64-linux-gnu/ /tmp/postgresql/lib/postgresql/16/lib
+# RUN cp -rL /usr/lib/x86_64-linux-gnu/libgeos* /usr/lib/x86_64-linux-gnu/libproj* /usr/lib/x86_64-linux-gnu/libgdal* /usr/lib/x86_64-linux-gnu/libjson-c* /usr/lib/x86_64-linux-gnu/libprotobuf-c* /tmp/postgresql/lib/postgresql/16/lib
 
-CMD ["sleep", "infinity"]
+# CMD ["sleep", "infinity"]
 
-#FROM postgres:16.8
-#
-## Copy the built extensions from the builder stage
-#COPY --from=production /tmp/postgresql/lib/postgresql /usr/lib/postgresql
-#COPY --from=production /tmp/postgresql/share/postgresql /usr/share/postgresql
-## COPY --from=production /usr/lib/x86_64-linux-gnu/ /usr/lib/x86_64-linux-gnu/
+FROM postgres:16.8
+
+# Copy the built extensions from the builder stage
+COPY --from=production /tmp/postgresql/lib/postgresql /usr/lib/postgresql
+COPY --from=production /tmp/postgresql/share/postgresql /usr/share/postgresql
+COPY --from=production /usr/lib/x86_64-linux-gnu/ /usr/lib/x86_64-linux-gnu/
