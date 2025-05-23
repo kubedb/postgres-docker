@@ -1,10 +1,10 @@
 apiVersion: kubedb.com/v1
 kind: Postgres
 metadata:
-  name: demo-pg-partman
+  name: demo-pg-temporal
   namespace: demo
 spec:
-  version: "16.4-alpine-pg-partman"
+  version: "16.8-debian-temporal-tables"
   replicas: 3
   standbyMode: Hot
   storageType: Durable

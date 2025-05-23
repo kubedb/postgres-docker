@@ -1,7 +1,7 @@
 apiVersion: catalog.kubedb.com/v1alpha1
 kind: PostgresVersion
 metadata:
-  name: "16.4-alpine-pg-partman"
+  name: 16.8-debian-temporal-tables
 spec:
   archiver:
     addon:
@@ -18,22 +18,22 @@ spec:
         volumeSnapshot:
           name: volume-snapshot
     walg:
-      image: ghcr.io/kubedb/postgres-archiver:v0.11.0_16.1-alpine
+      image: ghcr.io/kubedb/postgres-archiver:(v0.15.0)_16.1-bookworm
   coordinator:
-    image: ghcr.io/kubedb/pg-coordinator:v0.34.0
+    image: ghcr.io/kubedb/pg-coordinator:v0.38.0
   db:
-    baseOS: alpine
-    image: souravbiswassanto/postgres:16.4-pg-partman
+    baseOS: debian
+    image: souravbiswassanto/postgres:16.8-debian-temporal-tables
   distribution: Official
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.15.0
   initContainer:
-    image: ghcr.io/kubedb/postgres-init:0.17.0
+    image: ghcr.io/kubedb/postgres-init:0.17.1
   podSecurityPolicies:
     databasePolicyName: postgres-db
   securityContext:
-    runAsAnyNonRoot: false
-    runAsUser: 70
+    runAsAnyNonRoot: true
+    runAsUser: 999
   stash:
     addon:
       backupTask:
@@ -47,5 +47,5 @@ spec:
       version: v2024.4.27
   updateConstraints:
     allowlist:
-      - '>= 16.6'
-  version: "16.4"
+      - '>= 16.8'
+  version: "16.8"
