@@ -12,18 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM postgres:17-bookworm AS builder
+FROM postgres:17-alpine AS builder
 
-RUN apt-get update \
-   && apt-get install -y git build-essential postgresql-server-dev-17 \
-   && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache --virtual .build-deps \
+    git \
+    make \
+    gcc \
+    musl-dev \
+    clang19 \
+    llvm19 \
+    postgresql-dev
 
 RUN git clone https://github.com/eulerto/wal2json.git \
   && cd /wal2json \
   && git checkout wal2json_2_6 \
-  && make PG_CONFIG=/usr/lib/postgresql/17/bin/pg_config \
-  && make PG_CONFIG=/usr/lib/postgresql/17/bin/pg_config install
+  && make PG_CONFIG=/usr/local/bin/pg_config USE_PGXS=1 \
+  && make PG_CONFIG=/usr/local/bin/pg_config USE_PGXS=1 install
 
-FROM postgres:17-bookworm
-COPY --from=builder /usr/share/postgresql /usr/share/postgresql
-COPY --from=builder /usr/lib/postgresql /usr/lib/postgresql
+FROM postgres:17-alpine
+COPY --from=builder /usr/local/share/postgresql /usr/local/share/postgresql
+COPY --from=builder /usr/local/lib/postgresql /usr/local/lib/postgresql
