@@ -1,21 +1,55 @@
-FROM postgres:16.8
+FROM postgres:16.8-alpine
 
 # pgvector version to build
 ARG VECTOR_VERSION=v0.8.1
 
-RUN set -eux \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends \
+# ------------------------------------------------------------------
+# Switch to root user to install build dependencies
+# This is required as the base image runs as 'postgres' by default
+# ------------------------------------------------------------------
+
+# 1. Update package lists
+RUN apk update
+
+# 2. Install build-time dependencies
+# We use a "virtual" package (.build-deps) to easily remove them later
+RUN apk add --no-cache --virtual .build-deps \
         ca-certificates \
-        build-essential \
+        build-base \
         git \
-        postgresql-server-dev-16 \
-    \
-    # build and install pgvector
-    && git clone --branch ${VECTOR_VERSION} --depth 1 \
-        https://github.com/pgvector/pgvector.git /tmp/pgvector \
-    && make -C /tmp/pgvector \
-    && make -C /tmp/pgvector install \
-    \
-    # cleanup
-    && rm -rf /tmp/pgvector /var/lib/apt/lists/*
+        openssl \
+        tar \
+        unzip \
+        curl \
+        make \
+        gcc \
+        libc-dev \
+        postgresql16-dev \
+        cmake \
+        alpine-sdk \
+        util-linux-dev \
+        clang19-dev \
+        llvm19-dev \
+        gawk \
+        git \
+        zlib-dev 
+
+# 3. Clone the pgvector repository
+RUN git clone --branch ${VECTOR_VERSION} --depth 1 \
+        https://github.com/pgvector/pgvector.git /tmp/pgvector
+
+# 4. Build the extension
+RUN make -C /tmp/pgvector
+
+# 5. Install the extension
+RUN make -C /tmp/pgvector install
+
+# 6. Cleanup build dependencies and temporary files
+RUN set -eux \
+    && apk del .build-deps \
+    && rm -rf /tmp/pgvector \
+    && rm -rf /var/cache/apk/*
+
+# ------------------------------------------------------------------
+# Switch back to the default non-privileged postgres user
+# ------------------------------------------------------------------
