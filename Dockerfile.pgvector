@@ -1,0 +1,21 @@
+FROM postgres:16.8
+
+# pgvector version to build
+ARG VECTOR_VERSION=v0.8.1
+
+RUN set -eux \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        build-essential \
+        git \
+        postgresql-server-dev-16 \
+    \
+    # build and install pgvector
+    && git clone --branch ${VECTOR_VERSION} --depth 1 \
+        https://github.com/pgvector/pgvector.git /tmp/pgvector \
+    && make -C /tmp/pgvector \
+    && make -C /tmp/pgvector install \
+    \
+    # cleanup
+    && rm -rf /tmp/pgvector /var/lib/apt/lists/*
