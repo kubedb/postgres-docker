@@ -23,15 +23,18 @@ edit the example/catalog.yaml and change `.spec.db.image` part with your
 
 ### Update Existing Postgres Database
 
-Test this first in your environment.
+This is the case when you have an existing postgres database with 16.8 already running.
 
-- Create a postgres database using version `16.8`, wait for it become ready.
+To update that, we suggest you first test below process on your environment.
 
-- Edit the postgres object and update version to `16.8-pgvector` from `16.8`. `kubectl get pg -n <ns> <name>` should reflect your version change.
 
-- restart the standby databases first, once they come online, restart the primary.
-- The database should be ready again.
-- If everything works fine, you can update your client database like this.
+1. Create a postgres database using version `16.8`, wait for it become ready.
+
+2. Edit the postgres object and update version to `16.8-pgvector` from `16.8`. `kubectl get pg -n <ns> <name>` should reflect your version change.
+
+3. restart the standby databases first, once they come online, restart the primary.
+4. The database should be ready again.
+5. If everything works fine, you can update your client database following step 2 & 3.
 
 
 ### Create New Postgres Database
