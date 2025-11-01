@@ -1,20 +1,27 @@
-FROM postgres:16.8
-ARG TT_VERSION=v1.2.2
+# -------- STAGE 1: Build pgvector --------
+FROM alpine:3.20 AS builder
 
+ARG VECTOR_VERSION=v0.8.1
 
+# Install build dependencies
+RUN apk add --no-cache \
+        git \
+        build-base \
+        postgresql16-dev \
+        make
 
-RUN set -eux \
-   && apt-get update \
-   && apt-get install -y --no-install-recommends \
-   ca-certificates \
-   build-essential \
-   git \
-   postgresql-server-dev-16 \
-   \
-   && git clone --branch ${TT_VERSION} --depth 1 \
-   https://github.com/arkhipov/temporal_tables /tmp/tt \
-   && make  -C /tmp/tt \
-   && make  -C /tmp/tt install \
-   \
-   # cleanup
-   && rm -rf /tmp/tt /var/lib/apt/lists/*
+# Clone and build pgvector
+RUN git clone --branch ${VECTOR_VERSION} --depth 1 \
+        https://github.com/pgvector/pgvector.git /tmp/pgvector \
+    && make -C /tmp/pgvector \
+    && make -C /tmp/pgvector install
+
+# -------- STAGE 2: Final image --------
+FROM postgres:16.8-alpine
+
+# Copy pgvector built files from builder to the locations expected by postgres:16.8-alpine
+COPY --from=builder /usr/lib/postgresql16/vector.so /usr/local/lib/postgresql/
+COPY --from=builder /usr/share/postgresql16/extension/vector* /usr/local/share/postgresql/extension/
+
+# Optional: verify installation
+RUN ls -l /usr/local/lib/postgresql/ | grep vector || true

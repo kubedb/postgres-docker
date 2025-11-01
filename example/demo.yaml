@@ -1,10 +1,10 @@
 apiVersion: kubedb.com/v1
 kind: Postgres
 metadata:
-  name: demo-pg-temporal
+  name: demo-pg-vector
   namespace: demo
 spec:
-  version: "16.8-debian-temporal-tables"
+  version: "16.8-pgvector"
   replicas: 3
   standbyMode: Hot
   storageType: Durable

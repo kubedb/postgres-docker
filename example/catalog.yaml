@@ -1,7 +1,7 @@
 apiVersion: catalog.kubedb.com/v1alpha1
 kind: PostgresVersion
 metadata:
-  name: 16.8-debian-temporal-tables
+  name: "16.8-pgvector"
 spec:
   archiver:
     addon:
@@ -18,22 +18,22 @@ spec:
         volumeSnapshot:
           name: volume-snapshot
     walg:
-      image: ghcr.io/kubedb/postgres-archiver:(v0.15.0)_16.1-bookworm
+      image: ghcr.io/kubedb/postgres-archiver:v0.19.0_16.1-alpine
   coordinator:
-    image: ghcr.io/kubedb/pg-coordinator:v0.38.0
+    image: ghcr.io/kubedb/pg-coordinator:v0.42.0
   db:
-    baseOS: debian
-    image: souravbiswassanto/postgres:16.8-debian-temporal-tables
+    baseOS: alpine
+    image: <change-it>/postgres:16.8-pgvector
   distribution: Official
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.15.0
   initContainer:
-    image: ghcr.io/kubedb/postgres-init:0.17.1
+    image: ghcr.io/kubedb/postgres-init:0.17.2
   podSecurityPolicies:
-    databasePolicyName: postgres-db
+    databasePolicyName: ""
   securityContext:
-    runAsAnyNonRoot: true
-    runAsUser: 999
+    runAsAnyNonRoot: false
+    runAsUser: 70
   stash:
     addon:
       backupTask:
@@ -41,11 +41,11 @@ spec:
       restoreTask:
         name: postgres-restore-16.1
   ui:
-    - name: pgadmin
-      version: v2024.4.27
-    - name: dbgate
-      version: v2024.4.27
+  - name: pgadmin
+    version: v2024.4.27
+  - name: dbgate
+    version: v2024.4.27
   updateConstraints:
     allowlist:
-      - '>= 16.8'
+    - '>= 16.8'
   version: "16.8"
