@@ -1,55 +1,27 @@
-FROM postgres:16.8-alpine
+# -------- STAGE 1: Build pgvector --------
+FROM alpine:3.20 AS builder
 
-# pgvector version to build
 ARG VECTOR_VERSION=v0.8.1
 
-# ------------------------------------------------------------------
-# Switch to root user to install build dependencies
-# This is required as the base image runs as 'postgres' by default
-# ------------------------------------------------------------------
-
-# 1. Update package lists
-RUN apk update
-
-# 2. Install build-time dependencies
-# We use a "virtual" package (.build-deps) to easily remove them later
-RUN apk add --no-cache --virtual .build-deps \
-        ca-certificates \
+# Install build dependencies
+RUN apk add --no-cache \
+        git \
         build-base \
-        git \
-        openssl \
-        tar \
-        unzip \
-        curl \
-        make \
-        gcc \
-        libc-dev \
         postgresql16-dev \
-        cmake \
-        alpine-sdk \
-        util-linux-dev \
-        clang19-dev \
-        llvm19-dev \
-        gawk \
-        git \
-        zlib-dev 
+        make
 
-# 3. Clone the pgvector repository
+# Clone and build pgvector
 RUN git clone --branch ${VECTOR_VERSION} --depth 1 \
-        https://github.com/pgvector/pgvector.git /tmp/pgvector
+        https://github.com/pgvector/pgvector.git /tmp/pgvector \
+    && make -C /tmp/pgvector \
+    && make -C /tmp/pgvector install
 
-# 4. Build the extension
-RUN make -C /tmp/pgvector
+# -------- STAGE 2: Final image --------
+FROM postgres:16.8-alpine
 
-# 5. Install the extension
-RUN make -C /tmp/pgvector install
+# Copy pgvector built files from builder to the locations expected by postgres:16.8-alpine
+COPY --from=builder /usr/lib/postgresql16/vector.so /usr/local/lib/postgresql/
+COPY --from=builder /usr/share/postgresql16/extension/vector* /usr/local/share/postgresql/extension/
 
-# 6. Cleanup build dependencies and temporary files
-RUN set -eux \
-    && apk del .build-deps \
-    && rm -rf /tmp/pgvector \
-    && rm -rf /var/cache/apk/*
-
-# ------------------------------------------------------------------
-# Switch back to the default non-privileged postgres user
-# ------------------------------------------------------------------
+# Optional: verify installation
+RUN ls -l /usr/local/lib/postgresql/ | grep vector || true
