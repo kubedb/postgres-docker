@@ -1,7 +1,7 @@
 apiVersion: catalog.kubedb.com/v1alpha1
 kind: PostgresVersion
 metadata:
-  name: "16.8-pgvector"
+  name: "13.13-pgvector"
 spec:
   archiver:
     addon:
@@ -23,7 +23,7 @@ spec:
     image: ghcr.io/kubedb/pg-coordinator:v0.43.0
   db:
     baseOS: alpine
-    image: souravbiswassanto/postgres:16.8-pgvector
+    image: docker.io/souravbiswassanto/postgres:13-pgvector
   distribution: Official
   exporter:
     image: prometheuscommunity/postgres-exporter:v0.15.0
@@ -47,5 +47,5 @@ spec:
     version: v2024.4.27
   updateConstraints:
     allowlist:
-    - '>= 16.8'
-  version: "16.8"
+    - '>= 13.13'
+  version: "13.13"
