@@ -1,22 +1,10 @@
-# -------- STAGE 1: Build pgvector --------
-FROM postgres:13.13-alpine
+FROM ghcr.io/appscode-images/postgres:15.13-bookworm
 
-ARG VECTOR_VERSION=v0.8.1
-
-# Install build dependencies, build pgvector, then clean up
-RUN apk add --no-cache --virtual .build-deps \
-        git \
-        build-base \
-        clang15 \
-        llvm15 \
-    && git clone --branch ${VECTOR_VERSION} --depth 1 \
-        https://github.com/pgvector/pgvector.git /tmp/pgvector \
-    && cd /tmp/pgvector \
-    && make \
-    && make install \
-    && cd / \
-    && rm -rf /tmp/pgvector \
-    && apk del .build-deps
-
-# Optional: verify installation
-RUN ls -l /usr/local/lib/postgresql/ | grep vector || true
+RUN apt update && apt install -y wget && wget https://github.com/pgxman/pgxman/releases/download/v1.4.2/pgxman_linux_amd64.deb && dpkg -i pgxman_linux_amd64.deb
+RUN pgxman install -y --overwrite pgvector pg_cron pg_stat_statements
+# Bookworm defaults postgres user to 999. Our existing Postgres uses id 70
+# This changes the id of the user and group to match, and resets the group
+# on the filesystem as well.
+#RUN usermod -u 70 postgres \
+#  && groupmod -g 70 postgres \
+#  && find / -group 999 | xargs chgrp 70
