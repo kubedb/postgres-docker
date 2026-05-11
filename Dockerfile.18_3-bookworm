@@ -33,6 +33,7 @@ RUN apt-get install -y --no-install-recommends \
     cmake \
     curl \
     g++ \
+    gawk \
     gcc \
     gettext \
     git \
@@ -40,11 +41,15 @@ RUN apt-get install -y --no-install-recommends \
     libcunit1-dev \
     libgdal-dev \
     libgeos-dev \
+    libkrb5-dev \
+    liblz4-dev \
     libjson-c-dev \
+    libnuma-dev \
     libpcre2-dev \
     libpq-dev \
     libproj-dev \
     libprotobuf-c-dev \
+    libreadline-dev \
     libsfcgal-dev \
     libxml2-dev \
     libtool \
@@ -52,6 +57,7 @@ RUN apt-get install -y --no-install-recommends \
     make \
     pkg-config \
     postgresql-server-dev-18 \
+    protobuf-c-compiler \
     unzip \
     zlib1g-dev
 

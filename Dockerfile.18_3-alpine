@@ -35,15 +35,18 @@ RUN apk add --no-cache --virtual .build-deps \
     curl \
     file \
     g++ \
+    gawk \
     gcc \
     gdal-dev \
     geos-dev \
     gettext-dev \
     git \
     json-c-dev \
+    krb5-dev \
     libtool \
     libxml2-dev \
     llvm \
+    lz4-dev \
     make \
     openssl \
     pcre2-dev \
