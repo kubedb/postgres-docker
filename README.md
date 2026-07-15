@@ -16,8 +16,10 @@ existing init-container run scripts work against it unchanged:
 - `postgres` user and group at **uid/gid 999** (matches
   `spec.securityContext.runAsUser: 999`)
 - server binaries on `PATH` at `/usr/lib/postgresql/<major>/bin`
-- the TDE tooling KubeDB needs: `pg_tde_basebackup` (encrypted replica seeding)
-  and `pg_tde_rewind` (safe failback), verified present at build time
+- the TDE tooling KubeDB needs: `pg_tde_basebackup` (encrypted replica seeding),
+  `pg_tde_rewind` (safe failback), and `pg_tde_waldump` / `pg_tde_resetwal` (the
+  coordinator's failback WAL handling on an encrypted cluster), all verified
+  present at build time
 - the Docker official `docker-entrypoint.sh`, initdb helpers and `gosu`, borrowed
   verbatim from `postgres:<major>-bookworm` via a multi-stage copy
 - identical `PGDATA`, locale, `VOLUME`, `STOPSIGNAL SIGINT` and `EXPOSE 5432`

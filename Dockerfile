@@ -76,12 +76,17 @@ RUN set -eux; \
 		percona-postgresql-contrib \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
-	# sanity check: the Percona server and the pg_tde tooling KubeDB needs
-	# (pg_tde_basebackup for replica seeding, pg_tde_rewind for failback) must be
-	# present and on PATH.
+	# sanity check: the Percona server and the pg_tde tooling KubeDB needs must be
+	# present and on PATH. KubeDB uses pg_tde_basebackup for replica seeding,
+	# pg_tde_rewind for failback, and pg_tde_waldump / pg_tde_resetwal in the
+	# coordinator's failback WAL handling on an encrypted cluster (the plain tools
+	# cannot read encrypted WAL). Missing any of these silently breaks TDE HA, so
+	# assert them at build time.
 	/usr/lib/postgresql/${PG_MAJOR}/bin/postgres --version; \
-	test -x "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_tde_basebackup"; \
-	test -x "/usr/lib/postgresql/${PG_MAJOR}/bin/pg_tde_rewind"
+	for _bin in pg_tde_basebackup pg_tde_rewind pg_tde_waldump pg_tde_resetwal; do \
+		test -x "/usr/lib/postgresql/${PG_MAJOR}/bin/${_bin}" \
+			|| { echo "FATAL: required pg_tde tool ${_bin} not found in the image"; exit 1; }; \
+	done
 
 # Same PATH / PGDATA / run-dir setup as the official image. KubeDB overrides
 # PGDATA to its own mount at runtime; this default keeps the image usable
