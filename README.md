@@ -71,6 +71,6 @@ make version TAG=17.9
 ## Notes
 
 - Percona ships `pg_tde` as a hard dependency of the server package now, but the
-  Dockerfile installs `percona-postgresql-<major>-pg-tde` explicitly for clarity.
+  Dockerfile installs `percona-pg-tde<major>` explicitly for clarity.
 - `shared_preload_libraries` is intentionally left empty in the image; KubeDB
   composes it (with `pg_tde` first) in its start scripts when TDE is enabled.

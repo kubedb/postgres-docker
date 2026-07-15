@@ -44,6 +44,7 @@ RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
 		ca-certificates \
+		curl \
 		gnupg \
 		lsb-release \
 		locales \
@@ -59,10 +60,10 @@ ENV LANG=en_US.utf8
 # intent (and the build) is unambiguous. `create_main_cluster = false` stops
 # postgresql-common from spinning up a throwaway cluster during the build.
 RUN set -eux; \
-	wget -qO /tmp/percona-release.deb "https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb"; \
-	dpkg -i /tmp/percona-release.deb; \
-	rm -f /tmp/percona-release.deb; \
 	apt-get update; \
+	wget -qO /tmp/percona-release.deb "https://repo.percona.com/apt/percona-release_latest.$(lsb_release -sc)_all.deb"; \
+	apt-get install -y --no-install-recommends /tmp/percona-release.deb; \
+	rm -f /tmp/percona-release.deb; \
 	percona-release setup ppg-17; \
 	apt-get update; \
 	mkdir -p /etc/postgresql-common; \
@@ -71,7 +72,7 @@ RUN set -eux; \
 	apt-get install -y --no-install-recommends \
 		percona-postgresql-${PG_MAJOR}${PIN} \
 		percona-postgresql-client-${PG_MAJOR}${PIN} \
-		percona-postgresql-${PG_MAJOR}-pg-tde${PIN} \
+		percona-pg-tde${PG_MAJOR} \
 		percona-postgresql-contrib \
 	; \
 	rm -rf /var/lib/apt/lists/*; \

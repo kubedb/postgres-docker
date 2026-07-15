@@ -18,14 +18,17 @@ PLATFORM   ?= linux/amd64
 
 .PHONY: container
 container:
-	docker build --pull \
+	docker buildx build --pull --platform $(PLATFORM) --load \
 		--build-arg PG_MAJOR=$(PG_MAJOR) \
 		--build-arg PG_VERSION=$(PG_VERSION) \
 		-t $(IMAGE):$(TAG) .
 
 .PHONY: push
-push: container
-	docker push $(IMAGE):$(TAG)
+push:
+	docker buildx build --pull --platform $(PLATFORM) --push \
+		--build-arg PG_MAJOR=$(PG_MAJOR) \
+		--build-arg PG_VERSION=$(PG_VERSION) \
+		-t $(IMAGE):$(TAG) .
 
 # Convenience: print the Percona server version baked into the built image so the
 # tag can be reconciled with the actual minor.
