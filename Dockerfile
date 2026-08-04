@@ -1,7 +1,7 @@
 # -------- STAGE 1: Build pgvector --------
 FROM alpine:3.20 AS builder
 
-ARG VECTOR_VERSION=v0.8.1
+ARG VECTOR_VERSION=v0.8.4
 
 # Install build dependencies
 RUN apk add --no-cache \
