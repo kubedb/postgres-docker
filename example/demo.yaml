@@ -1,17 +1,93 @@
 apiVersion: kubedb.com/v1
 kind: Postgres
 metadata:
-  name: demo-pg-vector
-  namespace: demo
+  name: omsteel-db
+  namespace: temp
 spec:
-  version: "16.8-pgvector"
-  replicas: 3
+  allowedSchemas:
+    namespaces:
+      from: Same
+  clientAuthMode: md5
+  deletionPolicy: Halt
+  mode: Standalone
+  podTemplate:
+    controller: {}
+    metadata: {}
+    spec:
+      containers:
+      - name: postgres
+        resources:
+          limits:
+            cpu: "2"
+            memory: 8Gi
+          requests:
+            cpu: "2"
+            memory: 8Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 70
+          runAsNonRoot: true
+          runAsUser: 70
+          seccompProfile:
+            type: RuntimeDefault
+      - name: pg-coordinator
+        resources:
+          limits:
+            memory: 256Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 70
+          runAsNonRoot: true
+          runAsUser: 70
+          seccompProfile:
+            type: RuntimeDefault
+      initContainers:
+      - name: postgres-init-container
+        resources:
+          limits:
+            memory: 512Mi
+          requests:
+            cpu: 200m
+            memory: 256Mi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsGroup: 70
+          runAsNonRoot: true
+          runAsUser: 70
+          seccompProfile:
+            type: RuntimeDefault
+      nodeSelector:
+        kubernetes.io/os: linux
+      podPlacementPolicy:
+        name: default
+      securityContext:
+        fsGroup: 999
+        runAsGroup: 70
+        runAsUser: 70
+      serviceAccountName: omsteel-db
+  replicas: 1
+  replication:
+    walKeepSize: 1536
+    walLimitPolicy: WALKeepSize
+  sslMode: disable
   standbyMode: Hot
-  storageType: Durable
   storage:
     accessModes:
-      - ReadWriteOnce
+    - ReadWriteOnce
     resources:
       requests:
-        storage: 2Gi
-  deletionPolicy: WipeOut
+        storage: 50Gi
+  storageType: Durable
+  version: 16.8-pgvector
